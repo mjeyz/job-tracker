@@ -1,10 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "partials/base.html" %}
+{% from "bootstrap5/form.html" import render_form %}
+{% block content %}
 
-</body>
-</html>
+
+<main class="mb-4 d-flex align-items-center min-vh-100">
+    <div class="container px-lg-5 px-4">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-5 col-xl-6">
+
+                <h2 class="text-center mb-3">Login</h2>
+                <div class="mt-4 p-4 rounded shadow-sm bg-white">
+                    {{ render_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+{% endblock %}

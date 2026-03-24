@@ -4,12 +4,13 @@ from flask_login import login_required, login_user, logout_user, current_user, L
 import psycopg2
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+from form import *
 
 app = Flask(__name__)
 Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-app.config['SECRET_KEY'] = "13114asdad"
+app.config['SECRET_KEY'] = "13114asap"
 
 
 
@@ -30,7 +31,8 @@ def index():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("auth/login.html")
+    form = LoginForm()
+    return render_template("auth/login.html", form=form)
 
 @app.route('/logout')
 def logout():
