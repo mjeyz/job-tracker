@@ -11,7 +11,7 @@ Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = "13114asap"
-
+DATABASE_URL =  "postgresql://postgres:9992@localhost:5432/job tracker"
 
 
 class User(UserMixin):
@@ -32,6 +32,13 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+
+    if form.validate_on_submit():
+        email = form.email.data
+        password = form.password.data
+
+        print(email, password)
+
     return render_template("auth/login.html", form=form)
 
 @app.route('/logout')
@@ -41,7 +48,31 @@ def logout():
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
-    return render_template("auth/register.html")
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+        username = form.username.data
+        email = form.email.data
+        dob = form.dob.data
+        gender = form.gender.data
+        password = form.password.data
+        terms = form.terms.data
+        privacy = form.privacy.data
+
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
+
+        with psycopg2.connect(DATABASE_URL) as conn:
+            cur = conn.cursor()
+            cur.execute("INSERT INTO users (first_name, last_name, username, dob, gender, email, password)"
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s)", (first_name, last_name, username, dob, gender, email, hashed_password))
+            conn.commit()
+
+        print(first_name, last_name, username, email, dob, gender, terms, privacy, hashed_password)
+
+
+    return render_template("auth/register.html", form=form)
 
 
 
