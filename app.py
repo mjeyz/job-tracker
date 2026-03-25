@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap5
 from flask_login import login_required, login_user, logout_user, current_user, LoginManager, UserMixin
 import psycopg2
+from psutil import users
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from form import *
@@ -15,17 +16,30 @@ DATABASE_URL =  "postgresql://postgres:9992@localhost:5432/job tracker"
 
 
 class User(UserMixin):
-    def __init__(self, id, name, email, password):
+    def __init__(self, id, first_name, last_name, username, dob, gender, email, password):
         self.id = id
-        self.name = name
+        self.first_name = first_name
+        self.last_name = last_name
+        self.username = username
+        self.dob = dob
+        self.gender = gender
         self.email = email
         self.password = password
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.filter_by(id=user_id).first()
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+
+        user = cur.fetchone()
+        if user:
+            return User(id=user[0], first_name=user[1], last_name=user[2],username=user[3], dob=user[4], gender=user[5], email=user[6], password=user[7])
+        return None
+
+
 @app.route('/')
-def index():
+def home():
     return render_template("index.html")
 
 
@@ -39,7 +53,27 @@ def login():
 
         print(email, password)
 
-    return render_template("auth/login.html", form=form)
+        with psycopg2.connect(DATABASE_URL) as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users Where email = %s", (email,))
+
+            user = cur.fetchone()
+
+            if not user:
+                flash("This email is not registered. Please register first.", "danger")
+                return redirect(url_for("login"))
+
+            print(user[7], check_password_hash(user[7], password))
+
+            if not check_password_hash(user[7], password):
+                flash("Incorrect password. Please try again.", "danger")
+                return redirect(url_for("login"))
+
+            user_obj = User(id=user[0], first_name=[1], last_name=[2], username=user[3], dob=[4], gender=user[5], email=user[6], password=[7])
+            login_user(user_obj)
+            return redirect(url_for("home"))
+
+    return render_template("auth/login.html", form=form, current_user=current_user)
 
 @app.route('/logout')
 def logout():
@@ -69,10 +103,10 @@ def register():
                         "VALUES (%s, %s, %s, %s, %s, %s, %s)", (first_name, last_name, username, dob, gender, email, hashed_password))
             conn.commit()
 
-        print(first_name, last_name, username, email, dob, gender, terms, privacy, hashed_password)
+            user = cur.fetchone()
 
 
-    return render_template("auth/register.html", form=form)
+    return render_template("auth/register.html", form=form, current_user=current_user)
 
 
 
