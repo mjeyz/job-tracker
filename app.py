@@ -2,7 +2,6 @@ from flask import Flask, render_template, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap5
 from flask_login import login_required, login_user, logout_user, current_user, LoginManager, UserMixin
 import psycopg2
-from psutil import users
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from form import *
@@ -103,7 +102,18 @@ def register():
                         "VALUES (%s, %s, %s, %s, %s, %s, %s)", (first_name, last_name, username, dob, gender, email, hashed_password))
             conn.commit()
 
-            user = cur.fetchone()
+
+            if cur.fetchone():
+                flash("This Email is already registered. Please register first.", "danger")
+                return redirect(url_for("register"))
+
+            cur.execute("SELECT id FROM users WHERE email = %s", (email,))
+            user_id = cur.fetchone()[0]
+
+            user = User(id=user_id, first_name=first_name, last_name=last_name, username=username, dob=dob, gender=gender, email=email, password=password)
+            login_user(user)
+            flash("Registration successful.", "success")
+            return redirect(url_for("home"))
 
 
     return render_template("auth/register.html", form=form, current_user=current_user)
