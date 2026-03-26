@@ -119,6 +119,22 @@ def register():
     return render_template("auth/register.html", form=form, current_user=current_user)
 
 
+@app.route("/add_application", methods=['GET', 'POST'])
+def add_application():
+    pass
+
+@app.route("/application/<int:application_id>", methods=['GET', 'POST'])
+def view_application(application_id):
+    pass
+
+@app.route("/edit_application", methods=["GET", "POST"])
+def edit_application(application_id):
+    pass
+
+@app.route("/delete_application", methods=["GET", "PAST"])
+def delete_application(application_id):
+    pass
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5003)

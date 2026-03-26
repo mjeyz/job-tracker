@@ -33,3 +33,9 @@ class RegisterForm(FlaskForm):
     terms = BooleanField('I agree to the Terms & Conditions', validators=[DataRequired()])
     privacy = BooleanField('I agree to the Privacy Policy', validators=[DataRequired()])
     submit = SubmitField('Create Account')
+
+class ApplicationForm(FlaskForm):
+    company_name = StringField("Company Name", validators=[DataRequired(), Length(2, 50)])
+    role = StringField("Role", validators=[DataRequired(), Length(2, 100)])
+    job_type = SelectField("Job Type", validators=[DataRequired()], choices=[("full_time", "Full Time"), ("part_time", "Part Time"), ("remote", "Remote")])
+    status = StringField("Status", validators=[DataRequired()])
