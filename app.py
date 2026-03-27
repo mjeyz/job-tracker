@@ -39,7 +39,7 @@ def load_user(user_id):
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template("index.html", current_user=current_user)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -77,7 +77,7 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('home'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
