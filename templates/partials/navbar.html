@@ -1,40 +1,194 @@
-{% extends "partials/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Boxicons -->
+  <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet"/>
 
-<nav class="navbar navbar-expand-lg bg-dark" style="background-color: rgba(0, 0, 0, 0.8)">
-    <div class="container px-5 px-lg-5 d-flex align-items-center justify-content-between">
+  <style>
+    /* ── Navbar ── */
+    .navbar {
+      background: #ffffff;
+      border-bottom: 1px solid #E5E7EB;
+      padding: 0.6rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    }
 
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <h2 class="nav-heading">Job Tracker</h2>
-        </a>
+    /* ── Search Bar ── */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F3F4F6;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 7px 14px;
+      width: 260px;
+      cursor: text;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .search-bar:focus-within {
+      border-color: #4F46E5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,.12);
+      background: #fff;
+    }
+    .search-bar i {
+      font-size: 1.05rem;
+      color: #9CA3AF;
+    }
+    .search-bar input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.875rem;
+      color: #374151;
+      width: 100%;
+    }
+    .search-bar input::placeholder { color: #9CA3AF; }
 
-        <!-- Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarResponsive" aria-controls="navbarResponsive"
-                aria-expanded="false" aria-label="Toggle navigation"
-                style="border-color: rgba(255, 255, 255, 0.5);">
-            <span class="navbar-toggler-icon" style="filter: brightness(0) invert(1);"></span>
-        </button>
+    /* ── User Menu ── */
+    .user-menu { display: flex; align-items: center; gap: 10px; }
 
-        <!-- Navbar Links -->
-        <div class="collapse navbar-collapse justify-content-end" id="navbarResponsive">
-            <ul class="navbar-nav align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="{{ url_for('home') }}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="{{ url_for('about') }}">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="{{ url_for('contact') }}">Contact</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="{{ url_for('register') }}">Register</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="{{ url_for('login') }}">Login</a>
-                </li>
-            </ul>
-        </div>
+    /* Notification Bell */
+    .notif-btn {
+      position: relative;
+      width: 36px; height: 36px;
+      background: #F3F4F6;
+      border: 1.5px solid #E5E7EB;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: #6B7280;
+      transition: background .2s;
+    }
+    .notif-btn:hover { background: #E0E7FF; color: #4F46E5; }
+    .notif-badge {
+      position: absolute;
+      top: 5px; right: 5px;
+      width: 8px; height: 8px;
+      background: #EF4444;
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    /* ── Profile ── */
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s;
+      text-decoration: none;
+    }
+    .profile:hover { background: #F3F4F6; }
+
+    /* Avatar circle */
+    .avatar {
+      width: 34px; height: 34px;
+      background: #E0E7FF;
+      color: #4F46E5;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      border: 1.5px solid #C7D2FE;
+    }
+
+    /* Username */
+    .profile-info .name {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.2;
+    }
+    .profile-info .role {
+      font-size: 0.72rem;
+      color: #9CA3AF;
+    }
+
+    /* Dropdown */
+    .dropdown-menu {
+      border-radius: 10px;
+      border: 1px solid #E5E7EB;
+      box-shadow: 0 8px 24px rgba(0,0,0,.1);
+      padding: 6px;
+      min-width: 170px;
+    }
+    .dropdown-item {
+      border-radius: 6px;
+      font-size: 0.875rem;
+      color: #374151;
+      padding: 8px 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dropdown-item:hover { background: #F3F4F6; }
+    .dropdown-item.text-danger:hover { background: #FEF2F2; }
+    .dropdown-divider { border-color: #E5E7EB; margin: 4px 0; }
+
+    /* Demo body */
+    body { background: #F9FAFB; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════ FIXED NAVBAR ════════════ -->
+<nav class="navbar navbar-expand-lg">
+
+  <!-- ① Search Bar (fixed: now has real input) -->
+  <div class="search-bar">
+    <i class="bx bx-search"></i>
+    <input type="text" placeholder="Search…" />
+  </div>
+
+  <!-- ② User Menu (fixed: avatar, name, dropdown all working) -->
+  <div class="user-menu">
+
+    <!-- Notification bell -->
+    <div class="notif-btn">
+      <i class="bx bx-bell" style="font-size:1.1rem;"></i>
+      <span class="notif-badge"></span>
     </div>
+
+    <!-- Profile dropdown -->
+    <div class="dropdown">
+      <a class="profile dropdown-toggle"
+         href="#"
+         data-bs-toggle="dropdown"
+         aria-expanded="false">
+
+        <!-- Avatar: initials "T" -->
+        <div class="avatar">T</div>
+
+        <!-- Name + role (fixed: were inside avatar div before) -->
+        <div class="profile-info">
+          <div class="name">Mudasir</div>
+          <div class="role">Student</div>
+        </div>
+      </a>
+
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="#"><i class="bx bx-user"></i> My Profile</a></li>
+        <li><a class="dropdown-item" href="#"><i class="bx bx-cog"></i> Settings</a></li>
+        <li><hr class="dropdown-divider"/></li>
+        <li><a class="dropdown-item text-danger" href="#"><i class="bx bx-log-out"></i> Logout</a></li>
+      </ul>
+    </div>
+
+  </div>
 </nav>
+<!-- ════════════ END NAVBAR ════════════ -->
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

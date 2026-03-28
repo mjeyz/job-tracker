@@ -118,6 +118,9 @@ def register():
 
     return render_template("auth/register.html", form=form, current_user=current_user)
 
+@app.route("/dashboard", methods=["GET", "POST"])
+def dashboard():
+    return render_template("dashboard.html", current_user=current_user)
 
 @app.route("/add_application", methods=['GET', 'POST'])
 def add_application():

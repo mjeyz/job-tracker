@@ -4,3 +4,85 @@
     box-sizing: border-box;
     font-family: "Segoe UI", system-ui, sans-serif;
 }
+
+:root {
+    --primary-color: #4F46E5;
+    --primary-hover: #4338ca;
+    --bg-color: #F3F4F6;
+    --sidebar-bg: #111827;
+    --card-bg: #FFFFFF;
+    --text-main: #1F2937;
+    --text-muted: #6B7280;
+    --danger: #EF4444;
+    --success: #10B981;
+    --warning: #F59E0B;
+}
+
+.header {
+    grid-column: 2 / -1;
+    grid-row: 1 / 2;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    z-index: 10;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.company-name {
+    font-family: "Times New Roman", sans-serif;
+    font-weight: bolder;
+    font-size: 1.5rem;
+}
+
+.status-btn {
+    border-radius: 40%;
+    padding: 5px;
+    color: white;
+    background-color: var(--success);
+    border: none;
+}
+
+
+.info-btn {
+    padding: 3px;
+    border: none;
+    background-color: #a1a1a1;
+    color: black;
+    border-radius: 15%;
+}
+
+.app-info {
+    border-bottom: 10px gray;
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+}

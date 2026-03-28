@@ -1,0 +1,66 @@
+{% extends "partials/base.html"%}
+{% include "partials/navbar.html"%}
+{% block content %}
+
+
+<div class="container d-flex align-items-center justify-content-between mb-2 header-section mt-5">
+    <div>
+        <h1 style="font-size: 1.87rem; font-weight: 700">Dashboard</h1>
+        <p style="color: var(--text-muted)">Overview of your Applications</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('dashboard') }}">
+        <i class="bx bx-plus"></i> New Application
+    </a>
+</div>
+
+<div class="stat-grid container">
+    <div class="stat-card">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Total</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">1</div>
+        <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Interviews</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">9</div>
+        <div class="stat-label">Rejected</div>
+    </div>
+</div>
+
+<div class="container">
+    <h2 class="mb-1" style="font-weight: 600; font-size: 1.87rem">Recent Application</h2>
+</div>
+
+<div class="d-grid gap-2 container mt-5 application-container">
+
+    <div class="application">
+        <div class="grid-item border-2 application bg-white p-4 rounded">
+            <div class="company-name-cont d-flex justify-content-between">
+                <h3 class="company-name">Software Engineering</h3>
+                <button class=" status-btn">Applied</button>
+            </div>
+
+            <div class="app-info d-flex gap-2">
+                <button class="location info-btn">Lahore</button>
+                <button class="info-btn">Full time</button>
+                <button class="info-btn">PKR 80,000</button>
+            </div>
+            <hr>
+            <div class="info">
+                <div>
+                    <span style="font-size: 1rem; font-weight: bold; color: var(--text-muted)">HR Person</span>
+                </div>
+                <div>
+                <p style="font-size: 0.890rem; color: var(--text-muted)">it is mo note</p>
+                </div>
+                <button class="btn btn-primary">view job</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
