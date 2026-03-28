@@ -70,7 +70,7 @@ def login():
 
             user_obj = User(id=user[0], first_name=[1], last_name=[2], username=user[3], dob=[4], gender=user[5], email=user[6], password=[7])
             login_user(user_obj)
-            return redirect(url_for("home"))
+            return redirect(url_for("dashboard"))
 
     return render_template("auth/login.html", form=form, current_user=current_user)
 
@@ -113,13 +113,16 @@ def register():
             user = User(id=user_id, first_name=first_name, last_name=last_name, username=username, dob=dob, gender=gender, email=email, password=password)
             login_user(user)
             flash("Registration successful.", "success")
-            return redirect(url_for("home"))
+            return redirect(url_for("dashboard"))
 
 
     return render_template("auth/register.html", form=form, current_user=current_user)
 
 @app.route("/dashboard", methods=["GET", "POST"])
+@login_required
 def dashboard():
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cur = conn.cursor()
     return render_template("dashboard.html", current_user=current_user)
 
 @app.route("/add_application", methods=['GET', 'POST'])
