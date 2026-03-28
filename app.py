@@ -11,7 +11,7 @@ Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = "13114asap"
-DATABASE_URL =  "postgresql://postgres:9992@localhost:5432/job tracker"
+DATABASE_URL = "postgresql://postgres:9992@localhost:5432/job tracker"
 
 
 class User(UserMixin):
@@ -25,6 +25,7 @@ class User(UserMixin):
         self.email = email
         self.password = password
 
+
 @login_manager.user_loader
 def load_user(user_id):
     with psycopg2.connect(DATABASE_URL) as conn:
@@ -33,7 +34,8 @@ def load_user(user_id):
 
         user = cur.fetchone()
         if user:
-            return User(id=user[0], first_name=user[1], last_name=user[2],username=user[3], dob=user[4], gender=user[5], email=user[6], password=user[7])
+            return User(id=user[0], first_name=user[1], last_name=user[2], username=user[3], dob=user[4],
+                        gender=user[5], email=user[6], password=user[7])
         return None
 
 
@@ -68,16 +70,19 @@ def login():
                 flash("Incorrect password. Please try again.", "danger")
                 return redirect(url_for("login"))
 
-            user_obj = User(id=user[0], first_name=[1], last_name=[2], username=user[3], dob=[4], gender=user[5], email=user[6], password=[7])
+            user_obj = User(id=user[0], first_name=[1], last_name=[2], username=user[3], dob=[4], gender=user[5],
+                            email=user[6], password=[7])
             login_user(user_obj)
             return redirect(url_for("dashboard"))
 
     return render_template("auth/login.html", form=form, current_user=current_user)
 
+
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -99,43 +104,51 @@ def register():
         with psycopg2.connect(DATABASE_URL) as conn:
             cur = conn.cursor()
             cur.execute("INSERT INTO users (first_name, last_name, username, dob, gender, email, password)"
-                        "VALUES (%s, %s, %s, %s, %s, %s, %s)", (first_name, last_name, username, dob, gender, email, hashed_password))
+                        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (first_name, last_name, username, dob, gender, email, hashed_password))
             conn.commit()
 
-
-            if cur.fetchone():
-                flash("This Email is already registered. Please register first.", "danger")
-                return redirect(url_for("register"))
+            # if cur.fetchone():
+            #     flash("This Email is already registered. Please register first.", "danger")
+            #     return redirect(url_for("register"))
 
             cur.execute("SELECT id FROM users WHERE email = %s", (email,))
             user_id = cur.fetchone()[0]
 
-            user = User(id=user_id, first_name=first_name, last_name=last_name, username=username, dob=dob, gender=gender, email=email, password=password)
+            user = User(id=user_id, first_name=first_name, last_name=last_name, username=username, dob=dob,
+                        gender=gender, email=email, password=password)
             login_user(user)
             flash("Registration successful.", "success")
             return redirect(url_for("dashboard"))
 
-
     return render_template("auth/register.html", form=form, current_user=current_user)
+
 
 @app.route("/dashboard", methods=["GET", "POST"])
 @login_required
 def dashboard():
     with psycopg2.connect(DATABASE_URL) as conn:
         cur = conn.cursor()
-    return render_template("dashboard.html", current_user=current_user)
+        cur.execute("SELECT * FROM job_application WHERE id = %s", (current_user.id,))
+        application = cur.fetchall()
+
+    return render_template("dashboard.html", current_user=current_user, applications=application)
+
 
 @app.route("/add_application", methods=['GET', 'POST'])
 def add_application():
     pass
 
+
 @app.route("/application/<int:application_id>", methods=['GET', 'POST'])
 def view_application(application_id):
     pass
 
+
 @app.route("/edit_application", methods=["GET", "POST"])
 def edit_application(application_id):
     pass
+
 
 @app.route("/delete_application", methods=["GET", "PAST"])
 def delete_application(application_id):

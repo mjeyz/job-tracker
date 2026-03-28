@@ -36,31 +36,40 @@
     <h2 class="mb-1" style="font-weight: 600; font-size: 1.87rem">Recent Application</h2>
 </div>
 
-<div class="d-grid gap-2 container mt-5 application-container">
 
+<div class="d-grid gap-2 container mt-5 application-container">
+    {% if applications %}
     <div class="application">
         <div class="grid-item border-2 application bg-white p-4 rounded">
+            {% for application in applications %}
             <div class="company-name-cont d-flex justify-content-between">
-                <h3 class="company-name">Software Engineering</h3>
-                <button class=" status-btn">Applied</button>
+                <h3 class="company-name">{{ application[3] }}</h3>
+                <button class=" status-btn">{{ application[5] }}</button>
             </div>
 
             <div class="app-info d-flex gap-2">
-                <button class="location info-btn">Lahore</button>
-                <button class="info-btn">Full time</button>
-                <button class="info-btn">PKR 80,000</button>
+                <button class="location info-btn">{{ application[8]}}</button>
+                <button class="info-btn">{{ application[4]}}</button>
+                <button class="info-btn">PKR {{application[7]}}</button>
             </div>
             <hr>
             <div class="info">
                 <div>
-                    <span style="font-size: 1rem; font-weight: bold; color: var(--text-muted)">HR Person</span>
+                    <span style="font-size: 1rem; font-weight: bold; color: var(--text-muted)">{{ application[10]}}</span>
                 </div>
                 <div>
-                <p style="font-size: 0.890rem; color: var(--text-muted)">it is mo note</p>
+                    <p style="font-size: 0.890rem; color: var(--text-muted)">{{ application[11]}}</p>
                 </div>
-                <button class="btn btn-primary">view job</button>
+                <button class="btn btn-primary" href="{{ application[9] }}">view job</button>
             </div>
         </div>
+        {% endfor %}
     </div>
+    {% else %}
+    <div style="text-align: center; padding: 4rem; background: white; border-radius: 12px; color: var(--text-muted);">
+        <i class='bx bx-task-x' style="font-size: 3rem; margin-bottom: 1rem;"></i>
+        <p>No tasks found. Create one to get started!</p>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
