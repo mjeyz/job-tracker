@@ -1,4 +1,3 @@
-from Demos.c_extension.setup import sources
 from flask import Flask, render_template, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap5
 from flask_login import login_required, login_user, logout_user, current_user, LoginManager, UserMixin
@@ -130,7 +129,7 @@ def register():
 def dashboard():
     with psycopg2.connect(DATABASE_URL) as conn:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM job_application WHERE id = %s", (current_user.id,))
+        cur.execute("SELECT * FROM job_application WHERE user_id = %s", (current_user.id,))
         application = cur.fetchall()
 
     return render_template("dashboard.html", current_user=current_user, applications=application)
@@ -147,17 +146,18 @@ def add_application():
         status = form.status.data
         applied_date = form.applied_date.data
         salary = form.salary.data
+        location = form.location.data
         source = form.source.data
         contact_person = form.contact_person.data
         notes = form.notes.data
 
         with psycopg2.connect(DATABASE_URL) as conn:
             cur = conn.cursor()
-            cur.execute("""INSERT INTO job_application (company_name, role, job_type,
-                                                        status, applied_date, salary, source, contact_person, notes)
-                           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                        (company_name, role, job_type, status, applied_date,
-                         salary, source, contact_person, notes))
+            cur.execute("""INSERT INTO job_application (user_id, company_name, role, job_type,
+                                                        status, applied_date, salary, location, source, contact_person, notes)
+                           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                        (current_user.id, company_name, role, job_type, status, applied_date,
+                         salary, location, source, contact_person, notes))
             conn.commit()
 
     return render_template("add_application.html", form=form, current_user=current_user)

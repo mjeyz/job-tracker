@@ -37,11 +37,11 @@
 </div>
 
 
-<div class="d-grid gap-2 container mt-5 application-container">
+<div class="d-grid gap-2 container mt-5 application-container mb-5">
     {% if applications %}
     <div class="application">
-        <div class="grid-item border-2 application bg-white p-4 rounded">
             {% for application in applications %}
+        <div class="grid-item  bg-white p-4 rounded">
             <div class="company-name-cont d-flex justify-content-between">
                 <h3 class="company-name">{{ application[3] }}</h3>
                 <button class=" status-btn">{{ application[5] }}</button>
