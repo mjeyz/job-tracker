@@ -1,3 +1,4 @@
+from Demos.c_extension.setup import sources
 from flask import Flask, render_template, redirect, url_for, session, flash
 from flask_bootstrap import Bootstrap5
 from flask_login import login_required, login_user, logout_user, current_user, LoginManager, UserMixin
@@ -108,12 +109,12 @@ def register():
                         (first_name, last_name, username, dob, gender, email, hashed_password))
             conn.commit()
 
-            # if cur.fetchone():
-            #     flash("This Email is already registered. Please register first.", "danger")
-            #     return redirect(url_for("register"))
-
             cur.execute("SELECT id FROM users WHERE email = %s", (email,))
             user_id = cur.fetchone()[0]
+
+            if cur.fetchone():
+                flash("This Email is already registered. Please register first.", "danger")
+                return redirect(url_for("register"))
 
             user = User(id=user_id, first_name=first_name, last_name=last_name, username=username, dob=dob,
                         gender=gender, email=email, password=password)
@@ -137,7 +138,29 @@ def dashboard():
 
 @app.route("/add_application", methods=['GET', 'POST'])
 def add_application():
-    pass
+    form = ApplicationForm()
+
+    if form.validate_on_submit():
+        company_name = form.company_name.data
+        role = form.role.data
+        job_type = form.job_type.data
+        status = form.status.data
+        applied_date = form.applied_date.data
+        salary = form.salary.data
+        source = form.source.data
+        contact_person = form.contact_person.data
+        notes = form.notes.data
+
+        with psycopg2.connect(DATABASE_URL) as conn:
+            cur = conn.cursor()
+            cur.execute("""INSERT INTO job_application (company_name, role, job_type,
+                                                        status, applied_date, salary, source, contact_person, notes)
+                           VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                        (company_name, role, job_type, status, applied_date,
+                         salary, source, contact_person, notes))
+            conn.commit()
+
+    return render_template("add_application.html", form=form, current_user=current_user)
 
 
 @app.route("/application/<int:application_id>", methods=['GET', 'POST'])
