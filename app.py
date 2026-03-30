@@ -170,13 +170,21 @@ def view_application(application_id):
 
 @app.route("/edit_application", methods=["GET", "POST"])
 def edit_application(application_id):
-    pass
+    return render_template("edit_application")
 
 
-@app.route("/delete_application", methods=["GET", "PAST"])
+@app.route("/delete_application", methods=["GET", "POST"])
 def delete_application(application_id):
-    pass
+    with psycopg2.connect(DATABASE_URL) as conn:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM job_application WHERE id = %s", (application_id,))
+        conn.commit()
 
+    flash("Application deleted successfully.", "success")
+    return redirect(url_for("dashboard"))
 
+@app.route("/contact", methods=['GET', 'POST'])
+def contact():
+    return render_template("contact.html")
 if __name__ == '__main__':
     app.run(debug=True, port=5003)
