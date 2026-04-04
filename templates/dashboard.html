@@ -1,9 +1,22 @@
-{% extends "partials/base.html"%}
-{% include "partials/navbar.html"%}
+{% extends "partials/base.html" %}
+{% include "partials/navbar.html" %}
+
 {% block content %}
+{# ----- DYNAMIC STATISTICS: compute counts from applications ----- #}
+{% set ns = namespace(total=0, pending=0, interviews=0, rejected=0) %}
+{% for app in applications %}
+    {% set ns.total = ns.total + 1 %}
+    {% set status = app[5]|lower %}
+    {% if status == 'pending' %}
+        {% set ns.pending = ns.pending + 1 %}
+    {% elif status == 'interview' %}
+        {% set ns.interviews = ns.interviews + 1 %}
+    {% elif status == 'rejected' %}
+        {% set ns.rejected = ns.rejected + 1 %}
+    {% endif %}
+{% endfor %}
 
-
-<div class="container d-flex align-items-center justify-content-between mb-2 header-section mt-5">
+<div class="container d-flex align-items-center justify-content-between mb-3 header-section mt-5">
     <div>
         <h1 style="font-size: 1.87rem; font-weight: 700">Dashboard</h1>
         <p style="color: var(--text-muted)">Overview of your Applications</p>
@@ -13,63 +26,83 @@
     </a>
 </div>
 
+{# ----- STATISTICS CARDS (now dynamic) ----- #}
 <div class="stat-grid container">
     <div class="stat-card">
-        <div class="stat-value">0</div>
+        <div class="stat-value">{{ ns.total }}</div>
         <div class="stat-label">Total</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">1</div>
+        <div class="stat-value">{{ ns.pending }}</div>
         <div class="stat-label">Pending</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">3</div>
+        <div class="stat-value">{{ ns.interviews }}</div>
         <div class="stat-label">Interviews</div>
     </div>
     <div class="stat-card">
-        <div class="stat-value">9</div>
+        <div class="stat-value">{{ ns.rejected }}</div>
         <div class="stat-label">Rejected</div>
     </div>
 </div>
 
-<div class="container">
-    <h2 class="mb-1" style="font-weight: 600; font-size: 1.87rem">Recent Application</h2>
+<div class="container mt-4">
+    <h2 class="mb-3" style="font-weight: 600; font-size: 1.87rem">Recent Applications</h2>
 </div>
 
-
-<div class="d-grid gap-2 container mt-5 application-container mb-5">
+{# ----- APPLICATION GRID (responsive, modern cards) ----- #}
+<div class="container mt-3 mb-5">
     {% if applications %}
-    <div class="application">
-            {% for application in applications %}
-        <div class="grid-item  bg-white p-4 rounded">
-            <div class="company-name-cont d-flex justify-content-between">
-                <h3 class="company-name">{{ application[3] }}</h3>
-                <button class=" status-btn">{{ application[5] }}</button>
-            </div>
+        <div class="application-grid">
+            {% for app in applications %}
+                {# Unpack tuple indices for readability #}
+                {% set company = app[3] %}
+                {% set role = app[4] %}
+                {% set status = app[5] %}
+                {% set salary = app[7] %}
+                {% set location = app[8] %}
+                {% set source_url = app[9] %}
+                {% set contact_person = app[10] %}
+                {% set notes = app[11] %}
 
-            <div class="app-info d-flex gap-2">
-                <button class="location info-btn">{{ application[8]}}</button>
-                <button class="info-btn">{{ application[4]}}</button>
-                <button class="info-btn">PKR {{application[7]}}</button>
-            </div>
-            <hr>
-            <div class="info">
-                <div>
-                    <span style="font-size: 1rem; font-weight: bold; color: var(--text-muted)">{{ application[10]}}</span>
+                <div class="application-card">
+                    <div class="card-header d-flex justify-content-between align-items-start">
+                        <h3 class="company-name">{{ company }}</h3>
+                        <span class="status-badge status-{{ status|lower|replace(' ', '-') }}">{{ status }}</span>
+                    </div>
+
+                    <div class="role-info">
+                        <i class="bx bx-briefcase"></i> {{ role }}
+                    </div>
+
+                    <div class="app-details">
+                        <span class="detail-chip"><i class="bx bx-map"></i> {{ location }}</span>
+                        <span class="detail-chip"><i class="bx bx-dollar-circle"></i> PKR {{ salary }}</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="contact-info">
+                        <i class="bx bx-user"></i> <strong>Contact:</strong> {{ contact_person }}
+                    </div>
+
+                    <div class="notes-section">
+                        <i class="bx bx-note"></i> {{ notes if notes else "No additional notes." }}
+                    </div>
+
+                    <div class="card-footer">
+                        <a href="{{ source_url }}" class="view-link" target="_blank" rel="noopener noreferrer">
+                            <i class="bx bx-link-external"></i> View Job Posting
+                        </a>
+                    </div>
                 </div>
-                <div>
-                    <p style="font-size: 0.890rem; color: var(--text-muted)">{{ application[11]}}</p>
-                </div>
-                <button class="view-btn" href="{{ application[9] }}">view job</button>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
     {% else %}
-    <div style="text-align: center; padding: 4rem; background: white; border-radius: 12px; color: var(--text-muted);">
-        <i class='bx bx-task-x' style="font-size: 3rem; margin-bottom: 1rem;"></i>
-        <p>No tasks found. Create one to get started!</p>
-    </div>
+        <div class="empty-state">
+            <i class='bx bx-task-x'></i>
+            <p>No applications found. Create one to get started!</p>
+        </div>
     {% endif %}
 </div>
 {% endblock %}
