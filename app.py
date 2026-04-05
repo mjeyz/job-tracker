@@ -12,6 +12,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = "13114asap"
 DATABASE_URL = "postgresql://postgres:9992@localhost:5432/job tracker"
+PASSWORD = "dret zzps erox wpue"
+EMAIL = "thisismjeyz@gmail.com"
 
 
 class User(UserMixin):
@@ -159,6 +161,8 @@ def add_application():
                         (current_user.id, company_name, role, job_type, status, applied_date,
                          salary, location, source, contact_person, notes))
             conn.commit()
+            flash("Application added successfully.", "success")
+            return redirect(url_for("dashboard"))
 
     return render_template("add_application.html", form=form, current_user=current_user)
 
@@ -185,6 +189,7 @@ def delete_application(application_id):
 
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():
+
     return render_template("contact.html")
 if __name__ == '__main__':
     app.run(debug=True, port=5003)

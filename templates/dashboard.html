@@ -5,18 +5,41 @@
 {# ----- DYNAMIC STATISTICS: compute counts from applications ----- #}
 {% set ns = namespace(total=0, pending=0, interviews=0, rejected=0) %}
 {% for app in applications %}
-    {% set ns.total = ns.total + 1 %}
-    {% set status = app[5]|lower %}
-    {% if status == 'pending' %}
-        {% set ns.pending = ns.pending + 1 %}
-    {% elif status == 'interview' %}
-        {% set ns.interviews = ns.interviews + 1 %}
-    {% elif status == 'rejected' %}
-        {% set ns.rejected = ns.rejected + 1 %}
-    {% endif %}
+{% set ns.total = ns.total + 1 %}
+{% set status = app[5]|lower %}
+{% if status == 'pending' %}
+{% set ns.pending = ns.pending + 1 %}
+{% elif status == 'interview' %}
+{% set ns.interviews = ns.interviews + 1 %}
+{% elif status == 'rejected' %}
+{% set ns.rejected = ns.rejected + 1 %}
+{% endif %}
 {% endfor %}
+<div class="container mt-5">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show text-center mt-4" role="alert"
+         id="flash-message-{{ loop.index }}">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+    </div>
+    <script>
+        setTimeout(function () {
+            const msg = document.getElementById("flash-message-{{ loop.index }}");
+            if (msg) {
+                msg.style.display = "none";
+            }
+        }, 5000);
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</div>
 
 <div class="container d-flex align-items-center justify-content-between mb-3 header-section mt-5">
+
     <div>
         <h1 style="font-size: 1.87rem; font-weight: 700">Dashboard</h1>
         <p style="color: var(--text-muted)">Overview of your Applications</p>
@@ -26,7 +49,6 @@
     </a>
 </div>
 
-{# ----- STATISTICS CARDS (now dynamic) ----- #}
 <div class="stat-grid container">
     <div class="stat-card">
         <div class="stat-value">{{ ns.total }}</div>
@@ -50,59 +72,58 @@
     <h2 class="mb-3" style="font-weight: 600; font-size: 1.87rem">Recent Applications</h2>
 </div>
 
-{# ----- APPLICATION GRID (responsive, modern cards) ----- #}
 <div class="container mt-3 mb-5">
     {% if applications %}
-        <div class="application-grid">
-            {% for app in applications %}
-                {# Unpack tuple indices for readability #}
-                {% set company = app[3] %}
-                {% set role = app[4] %}
-                {% set status = app[5] %}
-                {% set salary = app[7] %}
-                {% set location = app[8] %}
-                {% set source_url = app[9] %}
-                {% set contact_person = app[10] %}
-                {% set notes = app[11] %}
+    <div class="application-grid">
+        {% for app in applications %}
+        {# Unpack tuple indices for readability #}
+        {% set company = app[3] %}
+        {% set role = app[4] %}
+        {% set status = app[5] %}
+        {% set salary = app[7] %}
+        {% set location = app[8] %}
+        {% set source_url = app[9] %}
+        {% set contact_person = app[10] %}
+        {% set notes = app[11] %}
 
-                <div class="application-card">
-                    <div class="card-header d-flex justify-content-between align-items-start">
-                        <h3 class="company-name">{{ company }}</h3>
-                        <span class="status-badge status-{{ status|lower|replace(' ', '-') }}">{{ status }}</span>
-                    </div>
+        <div class="application-card">
+            <div class="card-header d-flex justify-content-between align-items-start">
+                <h3 class="company-name">{{ company }}</h3>
+                <span class="status-badge status-{{ status|lower|replace(' ', '-') }}">{{ status }}</span>
+            </div>
 
-                    <div class="role-info">
-                        <i class="bx bx-briefcase"></i> {{ role }}
-                    </div>
+            <div class="role-info">
+                <i class="bx bx-briefcase"></i> {{ role }}
+            </div>
 
-                    <div class="app-details">
-                        <span class="detail-chip"><i class="bx bx-map"></i> {{ location }}</span>
-                        <span class="detail-chip"><i class="bx bx-dollar-circle"></i> PKR {{ salary }}</span>
-                    </div>
+            <div class="app-details">
+                <span class="detail-chip"><i class="bx bx-map"></i> {{ location }}</span>
+                <span class="detail-chip"><i class="bx bx-dollar-circle"></i> PKR {{ salary }}</span>
+            </div>
 
-                    <hr>
+            <hr>
 
-                    <div class="contact-info">
-                        <i class="bx bx-user"></i> <strong>Contact:</strong> {{ contact_person }}
-                    </div>
+            <div class="contact-info">
+                <i class="bx bx-user"></i> <strong>Contact:</strong> {{ contact_person }}
+            </div>
 
-                    <div class="notes-section">
-                        <i class="bx bx-note"></i> {{ notes if notes else "No additional notes." }}
-                    </div>
+            <div class="notes-section">
+                <i class="bx bx-note"></i> {{ notes if notes else "No additional notes." }}
+            </div>
 
-                    <div class="card-footer">
-                        <a href="{{ source_url }}" class="view-link" target="_blank" rel="noopener noreferrer">
-                            <i class="bx bx-link-external"></i> View Job Posting
-                        </a>
-                    </div>
-                </div>
-            {% endfor %}
+            <div class="card-footer">
+                <a href="{{ source_url }}" class="view-link" target="_blank" rel="noopener noreferrer">
+                    <i class="bx bx-link-external"></i> View Job Posting
+                </a>
+            </div>
         </div>
+        {% endfor %}
+    </div>
     {% else %}
-        <div class="empty-state">
-            <i class='bx bx-task-x'></i>
-            <p>No applications found. Create one to get started!</p>
-        </div>
+    <div class="empty-state">
+        <i class='bx bx-task-x'></i>
+        <p>No applications found. Create one to get started!</p>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

@@ -37,7 +37,7 @@ class RegisterForm(FlaskForm):
 class ApplicationForm(FlaskForm):
     company_name = StringField("Company Name", validators=[DataRequired(), Length(2, 50)])
     role = StringField("Role", validators=[DataRequired(), Length(2, 100)])
-    job_type = SelectField("Job Type", validators=[DataRequired()], choices=[("full_time", "Full Time"), ("part_time", "Part Time"), ("remote", "Remote")])
+    job_type = SelectField("Job Type", validators=[DataRequired()], choices=[("Full Time", "Full Time"), ("Part Time", "Part Time"), ("Remote", "Remote")])
     status = SelectField("Status", validators=[DataRequired()], choices=[("submitted", "Submitted"), ("pending", "Pending"), ("interview", "Interview"), ("rejected", "Rejected")])
     applied_date = DateField("Date of Application", validators=[Optional()])
     salary = StringField("Salary", validators=[Optional()])
